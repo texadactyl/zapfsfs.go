@@ -160,7 +160,6 @@ func main() {
 
 	// If not a test run, do npasses of secure free space scrubbing.
 	if !*testRun {
-		fmt.Println("Beginning secure scrubbing...")
 		for ix := uint64(0); ix < *npasses; ix++ {
 			pass := ix + 1
 			fmt.Printf("Pass %d of %d...\n", pass, *npasses)
