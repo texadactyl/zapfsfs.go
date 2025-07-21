@@ -1,4 +1,4 @@
-Zap a file system free space. Fill it with a secure byte pattern.
+Zap the free space of a file system. Fill it with a secure byte pattern.
 
 ```
 zapfsfs  -h  (or no arguments)
