@@ -1,0 +1,59 @@
+name: Acid Test
+
+on:
+  push:
+    paths-ignore:
+      - '*.md'
+      - '*.py'
+      - '*.txt'
+      - '**.yml'
+    branches: [ "main" ]
+  pull_request:
+    paths-ignore:
+      - '*.md'
+      - '**.yml'
+    branches: [ "main" ]
+
+jobs:
+
+  run_zapfsfs:
+    strategy:
+      matrix:
+        
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - uses: actions/checkout@main
+
+    - name: Setup Go
+      uses: actions/setup-go@main
+      with:
+          go-version: '1.24.x'
+          cache: true
+          cache-dependency-path: "**/go.sum"
+          
+    - name: Setup for Linux or MacOS
+      run: |
+        echo "$HOME/go/bin" >> $GITHUB_PATH
+      shell: bash
+      if: runner.os != 'Windows'
+
+    - name: Setup for Windows
+      run: |
+        echo "%HOMEPATH%\go\bin" | Out-File -Append -FilePath $env:GITHUB_PATH
+      shell: powershell
+      if: runner.os == 'Windows'
+        
+    - name: Build
+      run: |
+        go get
+        go install -v .
+
+    - name: Execute Run with -t
+      run: |
+        zapfsfs . -t
+
+    - name: Execute Run with Defaults
+      run: |
+        zapfsfs .
+        
