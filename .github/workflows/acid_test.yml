@@ -52,7 +52,7 @@ jobs:
 
     - name: Execute Run with -t
       run: |
-        zapfsfs . -t
+        zapfsfs -t .
 
     - name: Execute Run with Defaults
       run: |
