@@ -22,7 +22,7 @@ var freeBytes uint64
 var (
 	bufferSizeMB = flag.Uint64("b", 10, "Size of each buffer to write to a temp file (in MB)")
 	bufferCount  = flag.Uint64("c", 1000, "Count of buffers to write in each pass (>0)")
-	npasses      = flag.Uint64("n", 5, "Number of file system freespace passes (>0)")
+	npasses      = flag.Uint64("n", 3, "Number of file system freespace passes (>0)")
 	testRun      = flag.Bool("t", false, "Number of file system freespace passes (>0)")
 )
 
@@ -58,7 +58,7 @@ func fillPattern(buf []byte, pattern []byte) {
 	}
 }
 
-func scrubOnceSecure(tempDir string, bufferCount uint64, bufferSize uint64, pattern []byte) error {
+func scrubOnce(tempDir string, bufferCount uint64, bufferSize uint64, pattern []byte) error {
 	if len(pattern) < 1 {
 		return fmt.Errorf("scrubOnceSecure: empty fill pattern array")
 	}
@@ -163,11 +163,18 @@ func main() {
 		for ix := uint64(0); ix < *npasses; ix++ {
 			pass := ix + 1
 			fmt.Printf("Pass %d of %d...\n", pass, *npasses)
-			err = scrubOnceSecure(tempDir, *bufferCount, bufferSize, pattern)
+
+			// Scrub once.
+			err = scrubOnce(tempDir, *bufferCount, bufferSize, pattern)
 			if err != nil {
 				_, _ = fmt.Fprintf(os.Stderr, "Error during pass %d, err: %v\n", pass, err)
 				os.Exit(1)
 			}
+			
+			// Swap pattern bytes.
+			holder := pattern[0]
+			pattern[0] = pattern[1]
+			pattern[1] = holder
 		}
 	}
 
