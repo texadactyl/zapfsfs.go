@@ -20,7 +20,7 @@ var freeBytes uint64
 
 // Command-line flags
 var (
-	bufferSizeMB = flag.Uint64("s", 10, "Size of each buffer to write to a temp file (in MB)")
+	bufferSizeMB = flag.Uint64("b", 10, "Size of each buffer to write to a temp file (in MB)")
 	bufferCount  = flag.Uint64("c", 1000, "Count of buffers to write in each pass (>0)")
 	npasses      = flag.Uint64("n", 5, "Number of file system freespace passes (>0)")
 	testRun      = flag.Bool("t", false, "Number of file system freespace passes (>0)")
